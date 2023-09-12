@@ -23,32 +23,6 @@ func run(cmd *exec.Cmd) error {
 	return nil
 }
 
-func DeviceShow(name string) (*Device, error) {
-	execPath, err := exec.LookPath(NMCLIBIN)
-	if err != nil {
-		return nil, err
-	}
-	cmd := exec.Command(execPath, "device", "show", name)
-
-	o, err := cmd.Output()
-	if err != nil {
-		return nil, err
-	}
-
-	result := strings.Split(string(o), "\n")
-
-	re := regexp.MustCompile(`^GENERAL\.STATE:\s+([0-9\.]+)\s\(.+\)$`)
-
-	for _, l := range result {
-		match := re.FindStringSubmatch(l)
-
-		if len(match) > 0 {
-			i, _ := strconv.Atoi(match[1])
-			return getState(i)
-		}
-	}
-}
-
 func DeviceStatus(dtype string) (*Device, error) {
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
@@ -135,7 +109,7 @@ func ConnectionAdd(name, ctype, ifname string, autoconnect bool) error {
 
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	cmd := exec.Command(execPath,
 		"connection", "add",
@@ -157,7 +131,7 @@ func ConnectionAdd(name, ctype, ifname string, autoconnect bool) error {
 func ConnectionDelete(name string) error {
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	cmd := exec.Command(execPath, "connection", "delete", name)
 
@@ -171,7 +145,7 @@ func ConnectionDelete(name string) error {
 func ConnectionModify(name, option, value string) error {
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	cmd := exec.Command(execPath, "connection", "modify", name, option, value)
 
@@ -185,7 +159,7 @@ func ConnectionModify(name, option, value string) error {
 func ConnectionUp(name string) error {
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	cmd := exec.Command(execPath, "connection", "up", name)
 
@@ -199,7 +173,7 @@ func ConnectionUp(name string) error {
 func ConnectionDown(name string) error {
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	cmd := exec.Command(execPath, "connection", "down", name)
 
@@ -291,7 +265,7 @@ func WifiList() ([]Wifi, error) {
 func WifiConnect(ssid, password string) error {
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	cmd := exec.Command(execPath,
         "device", "wifi",
