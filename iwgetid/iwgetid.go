@@ -1,6 +1,11 @@
 package iwgetid
 
 import (
+	"os/exec"
+	"strconv"
+	"strings"
+
+	"github.com/martinlindhe/unit"
 )
 
 func run(intf, flag string) (string, error) {
@@ -9,9 +14,18 @@ func run(intf, flag string) (string, error) {
 		return "", err
 	}
 
-	out, err := exec.Command(execPath, intf, "-r", flag).Output()
+	var args []string
+
+	if len(intf) > 0 {
+		args = append(args, intf)
+	}
+	if len(flag) > 0 {
+		args = append(args, flag)
+	}
+
+	out, err := exec.Command(execPath, args...).Output()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	return strings.TrimSpace(string(out)), nil
@@ -27,7 +41,7 @@ func GetSSID(intf string) (*string, error) {
 }
 
 func GetAccessPointMAC(intf string) (*string, error) {
-	apm, err = run(intf, "-a")
+	apm, err := run(intf, "-a")
 	if err != nil {
 		return nil, err
 	}
@@ -35,23 +49,23 @@ func GetAccessPointMAC(intf string) (*string, error) {
 	return &apm, nil
 }
 
-func GetChannel(intf string) (int, error) {
+func GetChannel(intf string) (*int, error) {
 	ch, err := run(intf, "-c")
 	if err != nil {
 		return nil, err
 	}
-	chi, _ = strconv.Atoi(ch)
+	chi, _ := strconv.Atoi(ch)
 
-    return chi, nil
+	return &chi, nil
 }
 
-func GetFrequency(intf string) (, error) {
+func GetFrequency(intf string) (*float64, error) {
 	freq, err := run(intf, "-f")
 	if err != nil {
 		return nil, err
 	}
 	freqFloat, _ := strconv.ParseFloat(freq, 64)
-	frequency = unit.Frequency(freqFloat) * unit.Hertz
+	frequency := unit.Frequency(freqFloat).Hertz()
 
-    return frequency, nil
+	return &frequency, nil
 }
