@@ -23,6 +23,38 @@ func run(cmd *exec.Cmd) error {
 	return nil
 }
 
+func DeviceShow(name string) (*Device, error) {
+	execPath, err := exec.LookPath(NMCLIBIN)
+	if err != nil {
+		return nil, err
+	}
+	cmd := exec.Command(execPath, "device", "show", name)
+
+	o, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+
+	result := strings.Split(string(o), "\n")
+
+	re := regexp.MustCompile(`^GENERAL\.STATE:\s+([0-9\.]+)\s\(.+\)$`)
+
+	for _, l := range result {
+		match := re.FindStringSubmatch(l)
+
+		if len(match) > 0 {
+			device := Device{
+				Name:  strings.TrimSpace(name),
+				State:  strings.TrimSpace(match[1]),
+			}
+
+			return &device, nil
+		}
+	}
+
+	return nil, nil
+}
+
 func DeviceStatus(dtype string) (*Device, error) {
 	execPath, err := exec.LookPath(NMCLIBIN)
 	if err != nil {
