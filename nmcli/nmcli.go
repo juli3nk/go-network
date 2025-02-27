@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os/exec"
 	"regexp"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 const NMCLIBIN string = "nmcli"
@@ -16,7 +16,7 @@ func run(cmd *exec.Cmd) error {
 
 	cmd.Stderr = &stderr
 
-	if err := cmd.Run() ; err != nil {
+	if err := cmd.Run(); err != nil {
 		return fmt.Errorf(stderr.String())
 	}
 
@@ -45,7 +45,7 @@ func DeviceShow(name string) (*Device, error) {
 		if len(match) > 0 {
 			device := Device{
 				Name:  strings.TrimSpace(name),
-				State:  strings.TrimSpace(match[1]),
+				State: strings.TrimSpace(match[1]),
 			}
 
 			return &device, nil
@@ -76,9 +76,9 @@ func DeviceStatus(dtype string) (*Device, error) {
 
 		if len(match) > 0 && match[2] == dtype {
 			device := Device{
-				Name: strings.TrimSpace(match[1]),
-				Type: strings.TrimSpace(match[2]),
-				State:  strings.TrimSpace(match[3]),
+				Name:       strings.TrimSpace(match[1]),
+				Type:       strings.TrimSpace(match[2]),
+				State:      strings.TrimSpace(match[3]),
 				Connection: strings.TrimSpace(match[4]),
 			}
 
@@ -111,15 +111,15 @@ func ConnectionShow(ctype, name string) (*Connection, error) {
 	for _, l := range result {
 		match := re.FindStringSubmatch(l)
 
-        if len(match) > 0 && strings.TrimSpace(match[3]) == ctype {
+		if len(match) > 0 && strings.TrimSpace(match[3]) == ctype {
 			if len(name) > 0 && strings.TrimSpace(match[1]) != name {
 				continue
 			}
 
 			connection = Connection{
-				Name: strings.TrimSpace(match[1]),
-				Uuid: strings.TrimSpace(match[2]),
-				Type: strings.TrimSpace(match[3]),
+				Name:   strings.TrimSpace(match[1]),
+				Uuid:   strings.TrimSpace(match[2]),
+				Type:   strings.TrimSpace(match[3]),
 				Device: strings.TrimSpace(match[4]),
 			}
 			active = true
@@ -155,7 +155,6 @@ func ConnectionAdd(name, ctype, ifname string, autoconnect bool) error {
 	if err := run(cmd); err != nil {
 		return err
 	}
-
 
 	return nil
 }
@@ -276,14 +275,14 @@ func WifiList() ([]Wifi, error) {
 			signal, _ := strconv.Atoi(match[7])
 
 			wifi := Wifi{
-				InUse: inUse,
-				Bssid: strings.TrimSpace(match[2]),
-				Ssid: strings.TrimSpace(match[3]),
-				Mode: strings.TrimSpace(match[4]),
-				Chan: channel,
-				Rate: strings.TrimSpace(match[6]),
-				Signal: signal,
-				Bars: strings.TrimSpace(match[8]),
+				InUse:    inUse,
+				Bssid:    strings.TrimSpace(match[2]),
+				Ssid:     strings.TrimSpace(match[3]),
+				Mode:     strings.TrimSpace(match[4]),
+				Chan:     channel,
+				Rate:     strings.TrimSpace(match[6]),
+				Signal:   signal,
+				Bars:     strings.TrimSpace(match[8]),
 				Security: strings.TrimSpace(match[9]),
 			}
 
@@ -300,10 +299,10 @@ func WifiConnect(ssid, password string) error {
 		return err
 	}
 	cmd := exec.Command(execPath,
-        "device", "wifi",
-        "connect", ssid,
-        "password", password,
-    )
+		"device", "wifi",
+		"connect", ssid,
+		"password", password,
+	)
 
 	if err := run(cmd); err != nil {
 		return err

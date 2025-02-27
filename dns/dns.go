@@ -24,7 +24,7 @@ func ServerRespond(domain string, dnsServer string) error {
 		return fmt.Errorf("cannot do new dnsClient")
 	}
 
-	dnsRequest.SetQuestion(domain + ".", dns.TypeA)
+	dnsRequest.SetQuestion(domain+".", dns.TypeA)
 
 	dnsRequest.SetEdns0(4096, true)
 
